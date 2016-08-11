@@ -1,1 +1,1 @@
-Please add the API_KEY in file com.yadav.divya.popularmovies.MovieFragment
+Please add the API_KEY in file app/build.gradle
