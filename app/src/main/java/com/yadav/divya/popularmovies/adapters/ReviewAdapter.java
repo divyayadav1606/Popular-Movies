@@ -2,7 +2,6 @@ package com.yadav.divya.popularmovies.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +17,13 @@ public class ReviewAdapter extends CursorAdapter {
     }
 
     @Override
+    public int getCount() {
+        return super.getCount();
+    }
+
+    @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        Log.d("New view", "mic");
-        return LayoutInflater.from(context).inflate(R.layout.listview_review, parent, true);
+        return LayoutInflater.from(context).inflate(R.layout.listview_review, parent, false);
     }
 
     @Override
@@ -31,7 +34,6 @@ public class ReviewAdapter extends CursorAdapter {
 
         author.setText(cursor.getString(2));
         content.setText(cursor.getString(3));
-        Log.d("Bind View", cursor.getString(3));
         url.setText(cursor.getString(4));
     }
 }

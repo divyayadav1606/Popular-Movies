@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.yadav.divya.popularmovies.data.MovieContract;
 
@@ -89,6 +90,7 @@ public class FetchMovieList extends AsyncTask<String, Void, Void> {
             }
 
             String str = buffer.toString();
+            Log.d("APP", str);
             try {
                 getMovieListFromJson(str);
             }   catch (JSONException e) {

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,7 +118,10 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data.moveToFirst()) {
+        if (!data.moveToFirst()) {
+            return;
+        }
+
             switch (loader.getId()) {
                 case DETAIL_LOADER: {
                     ImageView image = (ImageView) view.findViewById(R.id.imageView);
@@ -141,11 +145,13 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
                 }
 
                 case REVIEW_LOADER: {
+                    Log.d("APP", String.valueOf(data.getCount()));
                     reviewListAdapter.swapCursor(data);
                     break;
                 }
 
                 case TRAILER_LOADER: {
+                    Log.d("APP", String.valueOf(data.getCount()));
                     trailerListAdapter.swapCursor(data);
                     break;
                 }
@@ -155,7 +161,6 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
                 }
             }
         }
-    }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {

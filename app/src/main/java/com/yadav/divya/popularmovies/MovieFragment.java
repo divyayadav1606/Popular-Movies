@@ -27,6 +27,9 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
 
     private static final int MOVIE_LOADER = 0;
     private MovieAdapter movieAdapter;
+    static String POPULAR_FILTER = "popular";
+    static String TOP_RATED_FILTER = "top_rated";
+    static String FAVORITE_FILTER = "favorite";
 
     private static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
@@ -62,10 +65,13 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.popularmovies:
-                callFetchMovieList("popular");
+                callFetchMovieList(POPULAR_FILTER);
                 return true;
             case R.id.highestrated:
-                callFetchMovieList("top_rated");
+                callFetchMovieList(TOP_RATED_FILTER);
+                return true;
+            case R.id.favorite:
+                callFetchMovieList(FAVORITE_FILTER);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -102,7 +108,7 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
                 }
             }
         });
-        callFetchMovieList("popular");
+        callFetchMovieList(POPULAR_FILTER);
         return view;
     }
 

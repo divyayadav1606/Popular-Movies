@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +21,7 @@ public class TrailerAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        Log.d("New view", "trailer");
-        return LayoutInflater.from(context).inflate(R.layout.listview_trailers, parent, true);
+        return LayoutInflater.from(context).inflate(R.layout.listview_trailers, parent, false);
     }
 
     @Override
