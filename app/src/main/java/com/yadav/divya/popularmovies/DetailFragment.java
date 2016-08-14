@@ -29,6 +29,8 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
     private TrailerAdapter trailerListAdapter;
     private ReviewAdapter reviewListAdapter;
     View view = null;
+    static final String DETAIL_URI = "URI";
+    private Uri mUri;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -46,6 +48,13 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
         ListView trailersList;
         ListView reviewsList;
 
+        Bundle arguments = getArguments();
+        if (arguments == null) {
+            return null;
+        }
+        mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+        movie_id = mUri.getPathSegments().get(1);
+
         trailerListAdapter = new TrailerAdapter(getActivity(), null, 0);
         reviewListAdapter = new ReviewAdapter(getActivity(), null, 0);
 
@@ -60,9 +69,6 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
         if (reviewsList != null) {
             reviewsList.setAdapter(reviewListAdapter);
         }
-
-        Uri uri = Uri.parse(getActivity().getIntent().getDataString());
-        movie_id = uri.getPathSegments().get(1);
         FetchTrailerReviews task = new FetchTrailerReviews(getContext());
         task.execute(movie_id);
         return view;
@@ -78,11 +84,15 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (mUri == null) {
+            return null;
+        }
+
         switch(id) {
             case DETAIL_LOADER: {
                 return new CursorLoader(
                         getActivity(),
-                        Uri.parse(getActivity().getIntent().getDataString()),
+                        mUri,
                         null,
                         null ,
                         null,

@@ -1,12 +1,15 @@
 package com.yadav.divya.popularmovies;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,9 +19,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 
 import com.yadav.divya.popularmovies.adapters.MovieAdapter;
 import com.yadav.divya.popularmovies.data.MovieContract;
@@ -46,6 +46,18 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
     static final int COL_RELEASE_DATE = 3;
     static final int COL_TITLE = 4;
     static final int COL_VOTE_AVERAGE = 5;
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Uri dateUri);
+    }
 
     //Empty Constructor
     public MovieFragment() {}
@@ -103,8 +115,8 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
 
                 if (cursor != null) {
-                    Intent intent = new Intent(getContext(), DetailActivity.class).setData(MovieContract.MovieEntry.buildMovieUri(cursor.getInt(COL_MOVIE_ID)));
-                    startActivity(intent);
+                    ((Callback) getActivity())
+                            .onItemSelected(MovieContract.MovieEntry.buildMovieUri(cursor.getInt(COL_MOVIE_ID)));
                 }
             }
         });

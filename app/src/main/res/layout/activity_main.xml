@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/movie_grid"
+    android:name="com.yadav.divya.popularmovies.MovieFragment"
+    tools:context="com.yadav.divya.popularmovies.MovieFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yadav.divya.popularmovies.MainActivity">
-
-    <fragment
-        class="com.yadav.divya.popularmovies.MovieFragment"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/moviefragment" />
-</FrameLayout>
+    tools:layout="@android:layout/list_content"/>

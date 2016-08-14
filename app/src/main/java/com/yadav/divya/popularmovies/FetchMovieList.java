@@ -45,6 +45,8 @@ public class FetchMovieList extends AsyncTask<String, Void, Void> {
             movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieDetails.getString("release_date"));
             movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movieDetails.getString("title"));
             movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movieDetails.getString("vote_average"));
+            movieValues.put(MovieContract.MovieEntry.COLUMN_BACK_DROP, movieDetails.getString("backdrop_path"));
+
             cVVector.add(movieValues);
         }
 
