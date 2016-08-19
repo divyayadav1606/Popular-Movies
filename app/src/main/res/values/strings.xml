@@ -7,8 +7,13 @@
     <string name="no_internet">Not Connected to Internet</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="trailer_image">trailer_image</string>
     <string name="movie_poster">movie_poster</string>
     <string name="favorite">Favorite</string>
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">popularmovies.divya.yadav.com</string>
+    <string name="content_authority">com.yadav.divya.popularmovies.app</string>
+    <string name="popular">Popular</string>
+    <string name="top_rated">Top Rated</string>
 </resources>

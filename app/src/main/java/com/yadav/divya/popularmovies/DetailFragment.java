@@ -1,5 +1,6 @@
 package com.yadav.divya.popularmovies;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,9 +33,7 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
     static final String DETAIL_URI = "URI";
     private Uri mUri;
 
-    public DetailFragment() {
-        // Required empty public constructor
-    }
+    public DetailFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +68,15 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
         if (reviewsList != null) {
             reviewsList.setAdapter(reviewListAdapter);
         }
+
+        view.findViewById(R.id.favbutton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContentValues values = new ContentValues();
+                values.put(MovieContract.FavEntry._ID, movie_id);
+                getContext().getContentResolver().insert(MovieContract.FavEntry.CONTENT_URI, values);
+            }
+        });
         FetchTrailerReviews task = new FetchTrailerReviews(getContext());
         task.execute(movie_id);
         return view;

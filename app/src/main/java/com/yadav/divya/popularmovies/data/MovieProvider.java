@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 public class MovieProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -265,7 +264,7 @@ public class MovieProvider extends ContentProvider {
 
             case POPULAR: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.Trailersentry.TABLE_NAME,
+                        MovieContract.PopularEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -276,7 +275,7 @@ public class MovieProvider extends ContentProvider {
             }
             case TOPRATED: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.Trailersentry.TABLE_NAME,
+                        MovieContract.TopRatedentry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -287,7 +286,7 @@ public class MovieProvider extends ContentProvider {
             }
             case FAVORITE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.Trailersentry.TABLE_NAME,
+                        MovieContract.FavEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -380,8 +379,6 @@ public class MovieProvider extends ContentProvider {
                                 null);
 
                         if (!cursor.moveToFirst()) {
-                            Log.d("bulkInsert", value.get("_id").toString());
-
                             long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
                             if (_id != -1) {
                                 returnCount++;
@@ -454,7 +451,6 @@ public class MovieProvider extends ContentProvider {
             }
 
             case POPULAR: {
-                //Delete the List
                 db.beginTransaction();
                 try {
                     for (ContentValues value : values) {
@@ -463,6 +459,7 @@ public class MovieProvider extends ContentProvider {
                             returnCount++;
                         }
                     }
+                    db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
                 }
@@ -471,7 +468,6 @@ public class MovieProvider extends ContentProvider {
             }
 
             case TOPRATED: {
-                //Delete the List
                 db.beginTransaction();
                 try {
                     for (ContentValues value : values) {
@@ -480,6 +476,7 @@ public class MovieProvider extends ContentProvider {
                             returnCount++;
                         }
                     }
+                    db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
                 }
@@ -488,7 +485,6 @@ public class MovieProvider extends ContentProvider {
             }
 
             case FAVORITE: {
-                //Delete the List
                 db.beginTransaction();
                 try {
                     for (ContentValues value : values) {
@@ -497,6 +493,7 @@ public class MovieProvider extends ContentProvider {
                             returnCount++;
                         }
                     }
+                    db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
                 }

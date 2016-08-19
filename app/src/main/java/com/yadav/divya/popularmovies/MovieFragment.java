@@ -1,42 +1,41 @@
 package com.yadav.divya.popularmovies;
 
-import android.content.Context;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnMenuTabClickListener;
 import com.yadav.divya.popularmovies.adapters.MovieAdapter;
 import com.yadav.divya.popularmovies.data.MovieContract;
+import com.yadav.divya.popularmovies.sync.MovieSyncAdapter;
 
 public class MovieFragment extends Fragment implements  LoaderManager.LoaderCallbacks<Cursor>{
 
-    private static final int MOVIE_LOADER = 0;
-    private MovieAdapter movieAdapter;
-    static String POPULAR_FILTER = "popular";
-    static String TOP_RATED_FILTER = "top_rated";
-    static String FAVORITE_FILTER = "favorite";
+    private static final int POPULAR_MOVIE_LOADER = 0;
+    private static final int TOPRATED_MOVIE_LOADER = 1;
+    private static final int FAVORITE_MOVIE_LOADER = 2;
 
-    private static final String[] MOVIE_COLUMNS = {
+    private MovieAdapter movieAdapter;
+    private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
+
+    public static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.COLUMN_POSTER_PATH,
             MovieContract.MovieEntry.COLUMN_OVERVIEW,
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
             MovieContract.MovieEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.MovieEntry.COLUMN_BACK_DROP,
             MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE
     };
 
@@ -45,65 +44,25 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
     static final int COL_OVERVIEW = 2;
     static final int COL_RELEASE_DATE = 3;
     static final int COL_TITLE = 4;
-    static final int COL_VOTE_AVERAGE = 5;
+    static final int COL_BACKDROP = 5;
+    static final int COL_VOTE_AVERAGE = 6;
 
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
     public interface Callback {
-        /**
-         * DetailFragmentCallback for when an item has been selected.
-         */
-        public void onItemSelected(Uri dateUri);
+          void onItemSelected(Uri dateUri);
     }
 
-    //Empty Constructor
     public MovieFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.popularmovies:
-                callFetchMovieList(POPULAR_FILTER);
-                return true;
-            case R.id.highestrated:
-                callFetchMovieList(TOP_RATED_FILTER);
-                return true;
-            case R.id.favorite:
-                callFetchMovieList(FAVORITE_FILTER);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         movieAdapter = new MovieAdapter(getActivity(), null, 0);
+        mCallbacks = this;
 
         View view = inflater.inflate(R.layout.fragment_movie, container, false);
         GridView gridview = (GridView) view.findViewById(R.id.gridview);
@@ -120,29 +79,59 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
                 }
             }
         });
-        callFetchMovieList(POPULAR_FILTER);
+
+        //Bottom Navigation bar
+        BottomBar mBottomBar = BottomBar.attach(getActivity(), savedInstanceState);
+        mBottomBar.setItems(R.menu.bottombar_menu);
+        mBottomBar.setOnMenuTabClickListener(new OnMenuTabClickListener() {
+            @Override
+            public void onMenuTabSelected(@IdRes int menuItemId) {
+                if (menuItemId == R.id.bottomBarPopular) {
+                    getLoaderManager().restartLoader(POPULAR_MOVIE_LOADER, null, mCallbacks);
+                } else if (menuItemId == R.id.bottomBarTopRated) {
+                    getLoaderManager().restartLoader(TOPRATED_MOVIE_LOADER, null, mCallbacks);
+                } else if (menuItemId == R.id.bottomBarFavorite) {
+                    getLoaderManager().restartLoader(FAVORITE_MOVIE_LOADER, null, mCallbacks);
+                }
+            }
+
+            @Override
+            public void onMenuTabReSelected(@IdRes int menuItemId) {
+
+            }
+
+        });
+
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        getLoaderManager().initLoader(POPULAR_MOVIE_LOADER, null, this);
     }
 
-    public void callFetchMovieList(String sort) {
-        if (isOnline()) {
-            FetchMovieList task = new FetchMovieList(getContext());
-            task.execute(sort);
-        } else {
-            Toast.makeText(getContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
-        }
+    public void RefreshMovieList() {
+        MovieSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(),
-                MovieContract.MovieEntry.CONTENT_URI, MOVIE_COLUMNS, null, null, null);
+        switch (id) {
+
+            case POPULAR_MOVIE_LOADER:
+                return new CursorLoader(getActivity(),
+                        MovieContract.PopularEntry.CONTENT_URI, null, null, null, null);
+
+            case TOPRATED_MOVIE_LOADER:
+                return new CursorLoader(getActivity(),
+                        MovieContract.TopRatedentry.CONTENT_URI, null, null, null, null);
+
+            case FAVORITE_MOVIE_LOADER:
+                return new CursorLoader(getActivity(),
+                        MovieContract.FavEntry.CONTENT_URI, null, null, null, null);
+        }
+        return null;
     }
 
     @Override
