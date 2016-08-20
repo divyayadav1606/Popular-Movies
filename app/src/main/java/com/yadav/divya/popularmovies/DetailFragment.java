@@ -8,12 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -44,8 +45,8 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ListView trailersList;
-        ListView reviewsList;
+        RecyclerView trailersList;
+        RecyclerView reviewsList;
 
         Bundle arguments = getArguments();
         if (arguments == null) {
@@ -54,19 +55,22 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
         mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
         movie_id = mUri.getPathSegments().get(1);
 
-        trailerListAdapter = new TrailerAdapter(getActivity(), null, 0);
-        reviewListAdapter = new ReviewAdapter(getActivity(), null, 0);
+        trailerListAdapter = new TrailerAdapter(getActivity(), null);
+        reviewListAdapter = new ReviewAdapter(getActivity(), null);
 
         view = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        trailersList = (ListView) view.findViewById(R.id.listview_trailer);
+        trailersList = (RecyclerView) view.findViewById(R.id.listview_trailer);
         if (trailersList != null) {
             trailersList.setAdapter(trailerListAdapter);
+            trailersList.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
 
-        reviewsList = (ListView) view.findViewById(R.id.listview_reviews);
+        reviewsList = (RecyclerView) view.findViewById(R.id.listview_reviews);
         if (reviewsList != null) {
             reviewsList.setAdapter(reviewListAdapter);
+            reviewsList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         }
 
         view.findViewById(R.id.favbutton).setOnClickListener(new View.OnClickListener() {
@@ -142,17 +146,20 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
 
             switch (loader.getId()) {
                 case DETAIL_LOADER: {
-                    ImageView image = (ImageView) view.findViewById(R.id.imageView);
+                    ImageView image = (ImageView) view.findViewById(R.id.movie_poster);
                     Picasso.with(getContext())
                             .load("http://image.tmdb.org/t/p/w185/" + data.getString(MovieFragment.COL_POSTER_PATH))
                             .into(image);
+
+                    TextView title = (TextView) view.findViewById(R.id.movie_title);
+                    title.setText(data.getString(MovieFragment.COL_TITLE));
 
                     TextView plot = (TextView) view.findViewById(R.id.overview);
                     plot.setText(data.getString(MovieFragment.COL_OVERVIEW));
 
                     TextView year = (TextView) view.findViewById(R.id.release_year);
                     String[] date = data.getString(MovieFragment.COL_RELEASE_DATE).split("-");
-                    year.setText(date[0]);
+                    year.setText("Released: " + date[0]);
 
                     ImageView backdrop = (ImageView) view.findViewById(R.id.back_drop);
                     Picasso.with(getContext())
@@ -160,7 +167,7 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
                             .into(backdrop);
 
                     TextView rating = (TextView) view.findViewById(R.id.ranking);
-                    rating.setText(data.getString(MovieFragment.COL_VOTE_AVERAGE) + "/10");
+                    rating.setText("TmDb Rating: " + data.getString(MovieFragment.COL_VOTE_AVERAGE) + "/10");
                     break;
                 }
 

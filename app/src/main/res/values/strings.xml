@@ -6,7 +6,6 @@
     <string name="mark_as_favorite">Mark As Favorite</string>
     <string name="no_internet">Not Connected to Internet</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="trailer_image">trailer_image</string>
     <string name="movie_poster">movie_poster</string>
     <string name="favorite">Favorite</string>
@@ -17,4 +16,5 @@
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="menu_refresh">Refresh</string>
+    <string name="movie_back_drop">Movie Back Drop</string>
 </resources>

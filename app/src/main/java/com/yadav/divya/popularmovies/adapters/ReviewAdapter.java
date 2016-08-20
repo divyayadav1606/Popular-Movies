@@ -2,38 +2,43 @@ package com.yadav.divya.popularmovies.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.yadav.divya.popularmovies.R;
 
 
-public class ReviewAdapter extends CursorAdapter {
-    public ReviewAdapter(Context context, Cursor c, int flags) {
-        super(context, c, flags);
+public class ReviewAdapter extends CursorRecyclerViewAdapter<ReviewAdapter.ViewHolder> {
+    Context mContext;
+
+    public ReviewAdapter(Context context, Cursor c) {
+        super(context, c);
+        mContext = context;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView mAuthor;
+        public TextView mReview;
+        public ViewHolder(View view) {
+            super(view);
+            mAuthor = (TextView) view.findViewById(R.id.author);
+            mReview = (TextView) view.findViewById(R.id.content);
+        }
     }
 
     @Override
-    public int getCount() {
-        return super.getCount();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.listview_review, parent, false);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.listview_review, parent, false);
-    }
-
-    @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        TextView author = (TextView) view.findViewById(R.id.author);
-        TextView content = (TextView) view.findViewById(R.id.content);
-        TextView url = (TextView) view.findViewById(R.id.url);
-
-        author.setText(cursor.getString(2));
-        content.setText(cursor.getString(3));
-        url.setText(cursor.getString(4));
+    public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
+        viewHolder.mAuthor.setText(cursor.getString(2));
+        viewHolder.mReview.setText(cursor.getString(3));
     }
 }

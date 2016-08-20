@@ -4,41 +4,49 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.yadav.divya.popularmovies.R;
 
-public class TrailerAdapter extends CursorAdapter {
-    public TrailerAdapter(Context context, Cursor c, int flags) {
-        super(context, c, flags);
+public class TrailerAdapter extends CursorRecyclerViewAdapter<TrailerAdapter.ViewHolder> {
+    Context mContext;
+
+    public TrailerAdapter(Context context, Cursor c) {
+        super(context, c);
+        mContext = context;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public ImageView thumbnail;
+        public ViewHolder(View view) {
+            super(view);
+            thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+        }
     }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.listview_trailers, parent, false);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.listview_trailers, parent, false);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public void bindView(View view, final Context context, Cursor cursor) {
-        ImageView thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-        String trailer_name = cursor.getString(2);
+    public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
         final String trailer_source = cursor.getString(5);
 
-        TextView name = (TextView) view.findViewById(R.id.name);
-        name.setText(trailer_name);
-        Picasso.with(context).load("http://img.youtube.com/vi/" + trailer_source + "/0.jpg").into(thumbnail);
+        Picasso.with(mContext).load("http://img.youtube.com/vi/" + trailer_source + "/0.jpg").into(viewHolder.thumbnail);
 
-        thumbnail.setOnClickListener(new View.OnClickListener() {
+        viewHolder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + trailer_source));
-                context.startActivity(intent);
+                mContext.startActivity(intent);
             }
         });
     }
