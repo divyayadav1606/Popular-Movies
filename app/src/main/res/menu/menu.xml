@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/popularmovies"
-        android:title="@string/mostpopular" />
-    <item android:id="@+id/highestrated"
-        android:title="@string/highestrated" />
-    <item android:id="@+id/favorite"
-        android:title="@string/favorite" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/refresh"
+        android:icon="@mipmap/refresh"
+        android:title="@string/menu_refresh"
+        app:showAsAction="always" />
 </menu>

@@ -8,7 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -56,6 +60,24 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                RefreshMovieList();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -83,6 +105,7 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
         //Bottom Navigation bar
         BottomBar mBottomBar = BottomBar.attach(getActivity(), savedInstanceState);
         mBottomBar.setItems(R.menu.bottombar_menu);
+        mBottomBar.useDarkTheme();
         mBottomBar.setOnMenuTabClickListener(new OnMenuTabClickListener() {
             @Override
             public void onMenuTabSelected(@IdRes int menuItemId) {
@@ -136,11 +159,13 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
+        Log.d("Load", "onLoadFinished");
         movieAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
+        Log.d("Load", "onLoaderReset");
         movieAdapter.swapCursor(null);
     }
 }

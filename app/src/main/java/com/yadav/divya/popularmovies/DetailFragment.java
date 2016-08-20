@@ -154,8 +154,10 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
                     String[] date = data.getString(MovieFragment.COL_RELEASE_DATE).split("-");
                     year.setText(date[0]);
 
-                    TextView title = (TextView) view.findViewById(R.id.title);
-                    title.setText(data.getString(MovieFragment.COL_TITLE));
+                    ImageView backdrop = (ImageView) view.findViewById(R.id.back_drop);
+                    Picasso.with(getContext())
+                            .load("http://image.tmdb.org/t/p/w185/" + data.getString(MovieFragment.COL_BACKDROP))
+                            .into(backdrop);
 
                     TextView rating = (TextView) view.findViewById(R.id.ranking);
                     rating.setText(data.getString(MovieFragment.COL_VOTE_AVERAGE) + "/10");

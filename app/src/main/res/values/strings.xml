@@ -16,4 +16,5 @@
     <string name="content_authority">com.yadav.divya.popularmovies.app</string>
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
+    <string name="menu_refresh">Refresh</string>
 </resources>
