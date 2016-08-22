@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 import com.yadav.divya.popularmovies.MovieFragment;
+import com.yadav.divya.popularmovies.R;
 import com.yadav.divya.popularmovies.data.MovieContract;
 
 public class MovieAdapter extends CursorAdapter {
@@ -21,10 +22,11 @@ public class MovieAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         ImageView imageView;
+        int imagePadding = (int)context.getResources().getDimension(R.dimen.image_view_padding);
 
         imageView = new ImageView(context);
         imageView.setAdjustViewBounds(true);
-        imageView.setPadding(5,5,5,5);
+        imageView.setPadding(imagePadding, imagePadding, imagePadding, imagePadding);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         return imageView;
     }
@@ -40,8 +42,11 @@ public class MovieAdapter extends CursorAdapter {
                 MovieContract.MovieEntry.CONTENT_URI,
                 MovieFragment.MOVIE_COLUMNS,
                 whereClause,
-                new String[]{cursor.getString(0)},
+                new String[]{cursor.getString(MovieFragment.COL_MOVIE_ID)},
                 null);
+
+        if (retCursor == null)
+            return;
 
         if (retCursor.moveToFirst())
             Picasso.with(context).load("http://image.tmdb.org/t/p/w185"+retCursor.getString(1)).into((ImageView) view);

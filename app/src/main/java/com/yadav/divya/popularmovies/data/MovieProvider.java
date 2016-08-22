@@ -44,7 +44,8 @@ public class MovieProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int rowsDeleted;
 
-        if ( null == selection ) selection = "1";
+        if ( null == selection )
+            selection = "1";
 
         switch(sUriMatcher.match(uri)) {
             case MOVIES : {
@@ -360,7 +361,7 @@ public class MovieProvider extends ContentProvider {
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int returnCount = 0;
-        Cursor cursor;
+        Cursor cursor = null;
 
         switch (sUriMatcher.match(uri)) {
             case MOVIES: {
@@ -378,6 +379,9 @@ public class MovieProvider extends ContentProvider {
                                 new String[]{value.get("_id").toString()},
                                 null);
 
+                        if (cursor == null)
+                            return 0;
+
                         if (!cursor.moveToFirst()) {
                             long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
                             if (_id != -1) {
@@ -386,6 +390,7 @@ public class MovieProvider extends ContentProvider {
                         } else {//Update the movie information
                             db.update(MovieContract.MovieEntry.TABLE_NAME, value, whereClause, new String[]{value.get("_id").toString()});
                         }
+                        cursor.close();
                     }
                     db.setTransactionSuccessful();
                 } finally {
@@ -407,13 +412,17 @@ public class MovieProvider extends ContentProvider {
                                 whereClause,
                                 new String[]{value.get("review_id").toString()},
                                 null);
+
+                        if (cursor == null)
+                            return 0;
+
                         if (!cursor.moveToFirst()) {
                             long _id = db.insert(MovieContract.ReviewsEntry.TABLE_NAME, null, value);
                             if (_id != -1) {
                                 returnCount++;
                             }
                         }
-
+                        cursor.close();
                     }
                     db.setTransactionSuccessful();
                 } finally {
@@ -435,12 +444,17 @@ public class MovieProvider extends ContentProvider {
                                 whereClause,
                                 new String[]{value.get("source").toString()},
                                 null);
+
+                        if (cursor == null)
+                            return 0;
+
                         if (!cursor.moveToFirst()) {
                             long _id = db.insert(MovieContract.Trailersentry.TABLE_NAME, null, value);
                             if (_id != -1) {
                                 returnCount++;
                             }
                         }
+                        cursor.close();
                     }
                     db.setTransactionSuccessful();
                 } finally {

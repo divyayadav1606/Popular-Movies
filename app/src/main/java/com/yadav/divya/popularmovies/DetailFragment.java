@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
                              Bundle savedInstanceState) {
         RecyclerView trailersList;
         RecyclerView reviewsList;
+        final Button favButton;
 
         Bundle arguments = getArguments();
         if (arguments == null) {
@@ -62,8 +64,10 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
 
         trailersList = (RecyclerView) view.findViewById(R.id.listview_trailer);
         if (trailersList != null) {
+            LinearLayoutManager layoutManager
+                    = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
             trailersList.setAdapter(trailerListAdapter);
-            trailersList.setLayoutManager(new LinearLayoutManager(getActivity()));
+            trailersList.setLayoutManager(layoutManager);
         }
 
         reviewsList = (RecyclerView) view.findViewById(R.id.listview_reviews);
@@ -73,12 +77,22 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
 
         }
 
-        view.findViewById(R.id.favbutton).setOnClickListener(new View.OnClickListener() {
+        favButton = (Button) view.findViewById(R.id.favbutton);
+        favButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ContentValues values = new ContentValues();
                 values.put(MovieContract.FavEntry._ID, movie_id);
-                getContext().getContentResolver().insert(MovieContract.FavEntry.CONTENT_URI, values);
+
+                if (isFavorite(movie_id)) {
+                    String whereClause = MovieContract.FavEntry._ID + " = ?";
+                    getContext().getContentResolver().delete(MovieContract.FavEntry.CONTENT_URI,
+                            whereClause, new String[]{movie_id});
+                    favButton.setText(R.string.mark_as_favorite);
+                } else {
+                    getContext().getContentResolver().insert(MovieContract.FavEntry.CONTENT_URI, values);
+                    favButton.setText(R.string.remove_as_favorite);
+                }
             }
         });
         FetchTrailerReviews task = new FetchTrailerReviews(getContext());
@@ -138,6 +152,30 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
         }
     }
 
+    private boolean isFavorite(String id){
+        Cursor cursor;
+
+        String whereClause = MovieContract.FavEntry._ID + " = ?";
+
+        cursor = getContext().getContentResolver().query(
+                MovieContract.FavEntry.CONTENT_URI,
+                new String[]{MovieContract.FavEntry._ID},
+                whereClause,
+                new String[]{id},
+                null);
+
+        if (cursor == null)
+            return false;
+
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return false;
+        } else {
+            cursor.close();
+            return true;
+        }
+    }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (!data.moveToFirst()) {
@@ -159,7 +197,7 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
 
                     TextView year = (TextView) view.findViewById(R.id.release_year);
                     String[] date = data.getString(MovieFragment.COL_RELEASE_DATE).split("-");
-                    year.setText("Released: " + date[0]);
+                    year.setText(getContext().getResources().getString(R.string.released_date) + date[0]);
 
                     ImageView backdrop = (ImageView) view.findViewById(R.id.back_drop);
                     Picasso.with(getContext())
@@ -167,7 +205,13 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
                             .into(backdrop);
 
                     TextView rating = (TextView) view.findViewById(R.id.ranking);
-                    rating.setText("TmDb Rating: " + data.getString(MovieFragment.COL_VOTE_AVERAGE) + "/10");
+                    rating.setText(getContext().getResources().getString(R.string.rating) +
+                            data.getString(MovieFragment.COL_VOTE_AVERAGE) + "/10");
+
+                    if (isFavorite(data.getString(MovieFragment.COL_MOVIE_ID))){
+                        Button fav = (Button) view.findViewById(R.id.favbutton);
+                        fav.setText(R.string.remove_as_favorite);
+                    }
                     break;
                 }
 

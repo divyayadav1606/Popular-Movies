@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,13 +42,13 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
             MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE
     };
 
-    static final int COL_MOVIE_ID = 0;
-    static final int COL_POSTER_PATH = 1;
-    static final int COL_OVERVIEW = 2;
-    static final int COL_RELEASE_DATE = 3;
-    static final int COL_TITLE = 4;
-    static final int COL_BACKDROP = 5;
-    static final int COL_VOTE_AVERAGE = 6;
+    public static final int COL_MOVIE_ID = 0;
+    public static final int COL_POSTER_PATH = 1;
+    public static final int COL_OVERVIEW = 2;
+    public static final int COL_RELEASE_DATE = 3;
+    public static final int COL_TITLE = 4;
+    public static final int COL_BACKDROP = 5;
+    public static final int COL_VOTE_AVERAGE = 6;
 
     public interface Callback {
           void onItemSelected(Uri dateUri);
@@ -159,13 +158,11 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
-        Log.d("Load", "onLoadFinished");
         movieAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
-        Log.d("Load", "onLoaderReset");
         movieAdapter.swapCursor(null);
     }
 }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.yadav.divya.popularmovies.data.MovieContract;
 
@@ -32,7 +31,7 @@ public class FetchTrailerReviews extends AsyncTask <String, Void, Void> {
     private void getTrailersReviewsFromJson(String str) throws JSONException {
         JSONObject MovieJson = new JSONObject(str);
         String movie_id = MovieJson.getString("id");
-        Log.d("APP", movie_id);
+
         JSONArray movieArrayReviews = MovieJson.getJSONObject("reviews").getJSONArray("results");
         JSONArray movieArrayTrailers = MovieJson.getJSONObject("trailers").getJSONArray("youtube");
 
@@ -115,7 +114,7 @@ public class FetchTrailerReviews extends AsyncTask <String, Void, Void> {
             }
 
             String str = buffer.toString();
-            Log.d("APP", str);
+
             try {
                 getTrailersReviewsFromJson(str);
             }   catch (JSONException e) {

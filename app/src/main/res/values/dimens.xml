@@ -2,4 +2,22 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Grid View -->
+    <dimen name="image_view_padding">5dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_radius">3dp</dimen>
+    <dimen name="review_layout_padding">10dp</dimen>
+    <dimen name="review_author_text_size">15sp</dimen>
+    <dimen name="trailer_image_width">150dp</dimen>
+    <dimen name="trailer_image_height">100dp</dimen>
+    <dimen name="backdrop_height">170dp</dimen>
+    <dimen name="backdrop_padding">3dp</dimen>
+    <dimen name="poster_width">170dp</dimen>
+    <dimen name="poster_height">300dp</dimen>
+    <dimen name="poster_top_padding">100dp</dimen>
+    <dimen name="title_width">200dp</dimen>
+    <dimen name="title_text_size">20sp</dimen>
+    <dimen name="poster_padding">10dp</dimen>
+    <dimen name="textview_padding">3dp</dimen>
 </resources>

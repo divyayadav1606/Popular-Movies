@@ -4,7 +4,9 @@
     <string name="mostpopular">Most Popular </string>
     <string name="highestrated">Highest Rated</string>
     <string name="mark_as_favorite">Mark As Favorite</string>
+    <string name="remove_as_favorite">Remove from Favorite</string>
     <string name="no_internet">Not Connected to Internet</string>
+    <string name="rating">Rating: </string>
 
     <string name="trailer_image">trailer_image</string>
     <string name="movie_poster">movie_poster</string>
@@ -17,4 +19,5 @@
     <string name="top_rated">Top Rated</string>
     <string name="menu_refresh">Refresh</string>
     <string name="movie_back_drop">Movie Back Drop</string>
+    <string name="released_date">"Released: "</string>
 </resources>

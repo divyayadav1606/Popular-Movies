@@ -31,7 +31,7 @@ import java.net.URL;
 import java.util.Vector;
 
 public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
-    public static final int SYNC_INTERVAL = 60 * 60;
+    public static final int SYNC_INTERVAL = 3600;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
     static final int POPULAR_SORT = 1;

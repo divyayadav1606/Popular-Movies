@@ -1,4 +1,5 @@
-package com.yadav.divya.popularmovies.adapters;/*
+package com.yadav.divya.popularmovies.adapters;
+/*
  * Copyright (C) 2014 skyfish.jy@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
