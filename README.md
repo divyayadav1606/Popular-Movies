@@ -4,7 +4,7 @@ Popular Movies is a project coded as the second project for Udacity Android deve
 
 <img src="https://github.com/divyayadav1606/Popular-Movies/blob/master/screenshots/screenshot.jpg"  width="50%"/>
 
-<img src="https://github.com/divyayadav1606/Popular-Movies/blob/master/screenshots/Tablet_screenshot.png"  width="50%"/>
+<img src="https://github.com/divyayadav1606/Popular-Movies/blob/master/screenshots/Tablet_screenshot.png"  width="150%"/>
 
 Libraries Used:
 
