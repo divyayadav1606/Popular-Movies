@@ -1,5 +1,6 @@
 package com.yadav.divya.popularmovies;
 
+import android.content.AsyncQueryHandler;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
@@ -34,6 +35,8 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
     View view = null;
     static final String DETAIL_URI = "URI";
     private Uri mUri;
+    private boolean isFav = false;
+    private AsyncQueryHandler queryHandler;
 
     public DetailFragment() {}
 
@@ -78,23 +81,51 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
         }
 
         favButton = (Button) view.findViewById(R.id.favbutton);
+
+        queryHandler = new AsyncQueryHandler(getActivity().getContentResolver()) {
+            @Override
+            protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+                if (cursor != null && cursor.moveToFirst())
+                    isFav = true;
+                else
+                    isFav = false;
+            }
+
+            @Override
+            protected void onInsertComplete(int token, Object cookie, Uri uri) {
+                if (uri != null) {
+                    favButton.setText(R.string.remove_as_favorite);
+                    isFav = true;
+                }
+            }
+
+            @Override
+            protected void onDeleteComplete(int token, Object cookie, int result) {
+                Log.d("Delete", String.valueOf(result));
+                favButton.setText(R.string.mark_as_favorite);
+                isFav = false;
+            }
+        };
+
         favButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ContentValues values = new ContentValues();
                 values.put(MovieContract.FavEntry._ID, movie_id);
 
-                if (isFavorite(movie_id)) {
+                if (isFav) {
                     String whereClause = MovieContract.FavEntry._ID + " = ?";
-                    getContext().getContentResolver().delete(MovieContract.FavEntry.CONTENT_URI,
+                    queryHandler.startDelete(1, null, MovieContract.FavEntry.CONTENT_URI,
                             whereClause, new String[]{movie_id});
-                    favButton.setText(R.string.mark_as_favorite);
+
                 } else {
-                    getContext().getContentResolver().insert(MovieContract.FavEntry.CONTENT_URI, values);
-                    favButton.setText(R.string.remove_as_favorite);
+                    queryHandler.startInsert(1, null, MovieContract.FavEntry.CONTENT_URI, values);
                 }
             }
         });
+
+        isFavorite(movie_id);
+
         FetchTrailerReviews task = new FetchTrailerReviews(getContext());
         task.execute(movie_id);
         return view;
@@ -152,28 +183,14 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
         }
     }
 
-    private boolean isFavorite(String id){
-        Cursor cursor;
-
+    private void isFavorite(String id){
         String whereClause = MovieContract.FavEntry._ID + " = ?";
 
-        cursor = getContext().getContentResolver().query(
-                MovieContract.FavEntry.CONTENT_URI,
+        queryHandler.startQuery(1, null, MovieContract.FavEntry.CONTENT_URI,
                 new String[]{MovieContract.FavEntry._ID},
                 whereClause,
                 new String[]{id},
                 null);
-
-        if (cursor == null)
-            return false;
-
-        if (!cursor.moveToFirst()) {
-            cursor.close();
-            return false;
-        } else {
-            cursor.close();
-            return true;
-        }
     }
 
     @Override
@@ -208,7 +225,7 @@ public class DetailFragment extends Fragment implements  LoaderManager.LoaderCal
                     rating.setText(getContext().getResources().getString(R.string.rating) +
                             data.getString(MovieFragment.COL_VOTE_AVERAGE) + "/10");
 
-                    if (isFavorite(data.getString(MovieFragment.COL_MOVIE_ID))){
+                    if (isFav){
                         Button fav = (Button) view.findViewById(R.id.favbutton);
                         fav.setText(R.string.remove_as_favorite);
                     }
