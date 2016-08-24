@@ -46,7 +46,9 @@ public class TrailerAdapter extends CursorRecyclerViewAdapter<TrailerAdapter.Vie
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + trailer_source));
-                mContext.startActivity(intent);
+                if (intent.resolveActivity(mContext.getPackageManager()) != null) {
+                    mContext.startActivity(intent);
+                }
             }
         });
     }

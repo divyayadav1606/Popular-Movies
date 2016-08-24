@@ -28,9 +28,12 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
     private static final int POPULAR_MOVIE_LOADER = 0;
     private static final int TOPRATED_MOVIE_LOADER = 1;
     private static final int FAVORITE_MOVIE_LOADER = 2;
-
+    private GridView mGridView;
     private MovieAdapter movieAdapter;
     private LoaderManager.LoaderCallbacks<Cursor> mCallbacks;
+    private BottomBar mBottomBar;
+    private int mPosition = GridView.INVALID_POSITION;
+    private static final String SELECTED_KEY = "selected_position";
 
     public static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
@@ -86,13 +89,14 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
         mCallbacks = this;
 
         View view = inflater.inflate(R.layout.fragment_movie, container, false);
-        GridView gridview = (GridView) view.findViewById(R.id.gridview);
-        gridview.setAdapter(movieAdapter);
+        mGridView = (GridView) view.findViewById(R.id.gridview);
+        mGridView.setAdapter(movieAdapter);
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View v,
                                     int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                mPosition = position;
 
                 if (cursor != null) {
                     ((Callback) getActivity())
@@ -102,7 +106,8 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
         });
 
         //Bottom Navigation bar
-        BottomBar mBottomBar = BottomBar.attach(getActivity(), savedInstanceState);
+        mBottomBar = BottomBar.attach(getActivity(), savedInstanceState);
+        mBottomBar.noTabletGoodness();
         mBottomBar.setItems(R.menu.bottombar_menu);
         mBottomBar.useDarkTheme();
         mBottomBar.setOnMenuTabClickListener(new OnMenuTabClickListener() {
@@ -124,7 +129,20 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
 
         });
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mPosition != GridView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
+        super.onSaveInstanceState(outState);
+        mBottomBar.onSaveInstanceState(outState);
     }
 
     @Override
@@ -159,6 +177,9 @@ public class MovieFragment extends Fragment implements  LoaderManager.LoaderCall
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
         movieAdapter.swapCursor(data);
+        if (mPosition != GridView.INVALID_POSITION) {
+            mGridView.smoothScrollToPosition(mPosition);
+        }
     }
 
     @Override
